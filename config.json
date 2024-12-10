@@ -1,0 +1,7 @@
+{
+    "rabbitmq": {
+        "url": "amqp://localhost",
+        "queue": "hello",
+        "message": "Hello Diego!"
+    }
+}
