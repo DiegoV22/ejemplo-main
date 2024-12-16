@@ -1,7 +1,28 @@
 {
     "rabbitmq": {
         "url": "amqp://localhost",
-        "queue": "hello",
-        "message": "Hello Diego!"
+        "exchanges": {
+            "fanout": {
+                "name": "fanoutExchange",
+                "type": "fanout"
+            },
+            "direct": {
+                "name": "directExchange",
+                "type": "direct"
+            }
+        },
+        "queues": {
+            "correo": {
+                "queue": "correo",
+                "message": "¡Nuevos peluches disponibles! Visita nuestra tienda online."
+            },
+            "marketing": {
+                "queue": "marketing",
+                "message": "El equipo de marketing debe preparar una campaña para los nuevos peluches."
+            }
+        },
+        "routingKeys": {
+            "marketing": "marketing"
+        }
     }
 }

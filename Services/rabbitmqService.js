@@ -1,4 +1,3 @@
-// rabbitmqService.js
 const RabbitMQConnection = require('./rabbitmqConnection');
 const QueueManager = require('./Gestor/queueManager');
 
@@ -7,14 +6,21 @@ class RabbitMQService {
         this.url = url;
     }
 
-    async connectAndSend(queue, message) {
+    async connectAndSend(queue, message, exchange = '', routingKey = '', exchangeType = 'fanout') {
         try {
             const connection = await RabbitMQConnection.connect(this.url);
             const channel = await this.createChannel(connection);
 
-            const queueManager = new QueueManager(channel);
-            queueManager.assertQueue(queue);
-            queueManager.sendToQueue(queue, message);
+            if (exchange) {
+                // Declarar el exchange con el tipo dinámico
+                channel.assertExchange(exchange, exchangeType, { durable: false });
+                channel.publish(exchange, routingKey, Buffer.from(message));
+                console.log(` [x] Sent to exchange "${exchange}" with type "${exchangeType}": ${message}`);
+            } else {
+                const queueManager = new QueueManager(channel);
+                queueManager.assertQueue(queue);
+                queueManager.sendToQueue(queue, message);
+            }
 
             setTimeout(() => {
                 connection.close();
@@ -38,4 +44,3 @@ class RabbitMQService {
 }
 
 module.exports = RabbitMQService;
-    
